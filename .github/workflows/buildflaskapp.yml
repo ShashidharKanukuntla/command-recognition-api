@@ -18,8 +18,8 @@ jobs:
 
       - name: Build the image
         run: |
-          docker build -t commandrecognitionapi:latest .
+          docker build -t ${{ secrets.AZURE_ACR_NAME}}/commandrecognitionapi:latest .
 
       - name: Push the image to ACR
         run: |
-          docker push commandrecognitionapi:latest
+          docker push ${{ secrets.AZURE_ACR_NAME}}/commandrecognitionapi:latest
