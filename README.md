@@ -1,2 +1,2 @@
-# speech-to-text-flask-app
-Speech to text Flask application using Azure Speech Service
+# command-recognition-api
+Command Recognition Api Flask application using Azure Language Service
