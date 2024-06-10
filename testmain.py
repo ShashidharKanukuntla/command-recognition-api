@@ -11,6 +11,7 @@ classify_project_name = "customcommandclassify"
 classify_deployment_name = "customnclassifymodeldeploy"
 
 app = Flask(__name__)
+app.run(host='0.0.0.0')
 
 text_analytics_client = TextAnalyticsClient(
         endpoint=endpoint,
