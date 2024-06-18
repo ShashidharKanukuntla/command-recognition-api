@@ -1,10 +1,14 @@
 from flask import Flask
+import json
+from bson.json_util import dumps
+from pymongo import MongoClient
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 import os
 
 endpoint = "https://mycustom-nertext.cognitiveservices.azure.com/"
 key = os.environ.get('LANGUAGE_KEY')
+mongodb_connectionstring = os.environ.get('MONGODB_CS')
 ner_project_name = "mycustomnerlanguage"
 ner_deployment_name = "mycustomnermodeldeploy"
 classify_project_name = "customcommandclassify"
@@ -12,6 +16,13 @@ classify_deployment_name = "customnclassifymodeldeploy"
 
 app = Flask(__name__)
 app.run(host='0.0.0.0')
+
+try:
+    mongoinstance = MongoClient(mongodb_connectionstring)
+    ordersdb = mongoinstance.customvoicereactapp
+    mongoinstance.server_info()
+except:
+    print('DB Connection Error')
 
 text_analytics_client = TextAnalyticsClient(
         endpoint=endpoint,
@@ -67,3 +78,12 @@ def getMovieByTitle2(vcommand) :
             ))
     
     return {'commandType': commandType, 'entities': entities}
+
+@app.route('/api/orders/<string:patientid>', methods=['GET'])
+def getOrdersData(patientid) :
+    return getordersbypatient(patientid)
+
+def getordersbypatient(patientid):
+    bookings = json.loads(
+        dumps(list(ordersdb.ordersdata.find({"patientid": patientid}))))
+    return {"orders_list": bookings}
