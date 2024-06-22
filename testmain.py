@@ -2,6 +2,7 @@ from flask import Flask
 import json
 from bson.json_util import dumps
 from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
 import os
@@ -21,8 +22,8 @@ try:
     mongoinstance = MongoClient(mongodb_connectionstring)
     ordersdb = mongoinstance.customvoicereactapp
     mongoinstance.server_info()
-except:
-    print('DB Connection Error')
+except ConnectionFailure as e:
+    print(f"Could not connect to server: {e}", flush=True)
 
 text_analytics_client = TextAnalyticsClient(
         endpoint=endpoint,
@@ -84,6 +85,7 @@ def getOrdersData(patientid) :
     return getordersbypatient(patientid)
 
 def getordersbypatient(patientid):
+    print('Get Orders', flush=True)
     bookings = json.loads(
         dumps(list(ordersdb.ordersdata.find({"patientid": patientid}))))
     return {"orders_list": bookings}
