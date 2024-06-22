@@ -1,4 +1,5 @@
 from flask import Flask
+import logging
 import json
 from bson.json_util import dumps
 from pymongo import MongoClient
@@ -17,12 +18,15 @@ classify_deployment_name = "customnclassifymodeldeploy"
 
 app = Flask(__name__)
 app.run(host='0.0.0.0')
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger('werkzeug')
 
 try:
     mongoinstance = MongoClient(mongodb_connectionstring)
     ordersdb = mongoinstance.customvoicereactapp
     mongoinstance.server_info()
 except ConnectionFailure as e:
+    logger.info(f"Could not connect to server: {e}")
     print(f"Could not connect to server: {e}", flush=True)
 
 text_analytics_client = TextAnalyticsClient(
@@ -85,7 +89,7 @@ def getOrdersData(patientid) :
     return getordersbypatient(patientid)
 
 def getordersbypatient(patientid):
-    print('Get Orders', flush=True)
+    logger.info("Getting Orders")
     bookings = json.loads(
         dumps(list(ordersdb.ordersdata.find({"patientid": patientid}))))
     return {"orders_list": bookings}
