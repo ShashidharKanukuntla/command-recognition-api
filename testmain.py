@@ -18,7 +18,7 @@ classify_deployment_name = "customnclassifymodeldeploy"
 
 app = Flask(__name__)
 app.run(host='0.0.0.0')
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('werkzeug')
 
 try:
